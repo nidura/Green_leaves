@@ -1,0 +1,150 @@
+////with all supplier///////////////
+
+select  
+m_branch.name as branch, 
+s.supname,
+(select sum(t_fire_wood.qty) from t_fire_wood 
+left join m_suplier on m_suplier.supno=t_fire_wood.supno
+left join m_branch on m_branch.bno=t_fire_wood.bno
+where m_suplier.supno=s.supno and t_fire_wood.date between '2018-01-05' and '2018-03-06') as qty,
+(select sum(t_fire_wood.amount) from t_fire_wood 
+left join m_suplier on m_suplier.supno=t_fire_wood.supno
+left join m_branch on m_branch.bno=t_fire_wood.bno
+where m_suplier.supno=s.supno and t_fire_wood.date between '2018-01-05' and '2018-03-06') as amount,
+(select m_firewood_type.rate from t_fire_wood 
+left join m_suplier on m_suplier.supno=t_fire_wood.supno
+left join m_firewood_type  on m_firewood_type.fwtno=t_fire_wood.fwtno
+left join m_branch on m_branch.bno=t_fire_wood.bno
+where m_suplier.supno=s.supno group by m_suplier.supno ) as rate,
+(select t_fire_wood.date from t_fire_wood 
+left join m_suplier on m_suplier.supno=t_fire_wood.supno
+left join m_branch on m_branch.bno=t_fire_wood.bno
+where m_suplier.supno=s.supno group by m_suplier.supno) as date
+from
+m_suplier s
+left join
+m_route on m_route.index_no=s.rno
+left join 
+m_branch on m_branch.bno=m_route.bno
+
+
+////////group by firewoods////////////
+select 
+m_route.rname,
+m_branch.name,
+m_suplier.supname,
+(select sum(t_fire_wood.qty) from t_fire_wood 
+left join m_suplier sup on sup.index_no=t_fire_wood.supplier
+where sup.index_no=t.supplier and t_fire_wood.date between '2018-01-05' and '2018-03-06') as qty,
+(select sum(t_fire_wood.amount) from t_fire_wood 
+left join m_suplier sup on sup.index_no=t_fire_wood.supplier
+where sup.index_no=t.supplier and t_fire_wood.date between '2018-01-05' and '2018-03-06') as amount,
+m_firewood_type.rate
+from
+t_fire_wood t
+left join
+m_suplier on m_suplier.supno=t.supplier
+left join
+m_branch on m_branch.index_no=t.branch
+left join
+m_firewood_type on m_firewood_type.index_no=t.firewood_type
+left join
+m_route on m_route.index_no=t.route
+where 
+t.date between '2018-01-05' and '2018-03-06'
+and ('null' = 'null' or m_branch.index_no = null)
+and ('null' = 'null' or m_suplier.index_no=null)
+and ('null' = 'null' or m_route.index_no = null)
+group by t.supplier
+order by m_branch.index_no
+
+
+////////////////// find from date and to date //////////////
+select 
+m.index_no,
+m.name,
+(select ifnull(sum(t_fire_wood.qty) ,0.00) from t_fire_wood where t_fire_wood.branch=m.index_no and
+t_fire_wood.date between '2018-01-05' and '2018-07-20') as qty,
+(select ifnull(sum(t_fire_wood.amount),0.00) from t_fire_wood where t_fire_wood.branch=m.index_no and
+t_fire_wood.date between '2018-01-05' and '2018-03-06') as amount
+from
+m_branch m
+left join
+t_fire_wood on t_fire_wood.branch=m.index_no
+group by m.index_no
+order by m.index_no
+
+
+//////////////find from date to date and branch Route wise ////////////
+select
+r.rname,
+(select ifnull(sum(t_fire_wood.qty) ,0.00) from t_fire_wood where t_fire_wood.route=r.route
+and t_fire_wood.branch=r.branch  and t_fire_wood.date between '2018-01-05' and '2018-03-06') as qty
+from
+m_route r
+left join
+m_branch on m_branch.index_no=r.branch
+where m_branch.index_no=5
+order by r.index_no
+
+//////////////find from date to date and branch Date wise ////////////
+select
+t.date,
+sum(t.qty) as qty
+from
+t_fire_wood t
+left join
+m_branch on m_branch.index_no=t.branch
+where 
+t.date between '2018-01-05' and '2018-02-13'
+and ('5'  = 'null' or m_branch.index_no =5)
+group by t.date
+
+//////////Onload point wise /////////////////
+select 
+t.index_no,
+t.name,
+m_branch.name as branch,
+(select  ifnull(sum(t_fire_wood.qty),0.00)  from t_fire_wood 
+left join m_firewood_unloard_point  on m_firewood_unloard_point.index_no=t_fire_wood.firewood_unloard_point
+where t.index_no=t_fire_wood.firewood_unloard_point and t_fire_wood.date between '2018-01-05' and '2018-03-06') as qty
+from
+m_firewood_unloard_point t
+left join
+t_fire_wood on  t_fire_wood.firewood_unloard_point = t.index_no
+left join
+m_branch on m_branch.index_no=t.branch
+where 
+('null'  = 'null' or m_branch.index_no =null)
+group by t.index_no
+order by t.index_no
+
+
+//////////// unload point branch wise///////////
+select
+f.index_no,
+m_branch.name,
+f.name,
+(select IFNULL(sum(t_fire_wood.qty),0.00) from t_fire_wood 
+left join 
+m_firewood_type on m_firewood_type.index_no=t_fire_wood.firewood_type 
+left join
+m_firewood_unloard_point on m_firewood_unloard_point.index_no=t_fire_wood.firewood_unloard_point
+where m_firewood_type.index_no=f.index_no 
+and t_fire_wood.date between '2018-01-05' and '2018-03-06'
+and m_firewood_unloard_point.index_no= 1) as qty
+from 
+m_firewood_type f
+left join
+t_fire_wood on t_fire_wood.firewood_type=f.index_no
+left join
+m_branch on m_branch.index_no=f.branch
+where m_branch.index_no = 1
+group by f.index_no
+
+
+
+
+
+
+

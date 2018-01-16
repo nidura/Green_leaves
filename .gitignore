@@ -1,0 +1,8 @@
+/GreenLeaves/target/
+/GreenLeaves/node_modules/
+/GreenLeaves/bower_components/
+/GreenLeaves/src/main/resources/static/
+/GreenLeaves/debug.log
+/GreenLeaves/src/main/resources/META-INF/persistence.xml
+/GreenLeaves/upload-image
+/GreenLeaves/.idea

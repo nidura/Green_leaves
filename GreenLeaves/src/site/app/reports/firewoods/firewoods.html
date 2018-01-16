@@ -1,0 +1,158 @@
+<div class="index-content-header">
+
+</div>
+<div class="index-content-body">
+    <div class="col-xs-3 background-dark border-right" style="height: calc(100vh - 51px); display: flex; flex-flow: column;">
+        <div class="row">
+
+            <div class="col-xs-12">
+                <table class="control-table">
+                    <col class="col-xs-4"/>
+                    <col class="col-xs-8"/>
+
+                    <thead>
+                        <tr>
+                            <th>FROM DATE</th>
+                            <th><input class="form-control" type="date"  ng-model="model.fromDate"/></th>
+                        </tr>
+                        <tr>
+                            <th>TO DATE</th>
+                            <th><input class="form-control" type="date" ng-model="model.toDate" /></th>
+                        </tr>
+                        <tr>
+                            <th>BRANCH</th>
+                            <th><input class="form-control" ng-model="model.branch" uib-typeahead="branch.indexNo as (branch.indexNo + ' - ' + branch.name) for branch in model.branchList|filter:{name:$viewValue}|limitTo:10" typeahead-on-select="ui.onSelectBranch($item, $model, $label)" typeahead-input-formatter="ui.branchLabel($model)"/></th>
+                        </tr>
+                        <!--                        <tr>
+                                                    <th>SUPPLIER</th>
+                                                    <th><input class="form-control" ng-model="model.route" uib-typeahead="route.indexNo as (route.indexNo + ' - ' + route.name) for route in model.routes|filter:{name:$viewValue}|limitTo:10" typeahead-input-formatter="ui.routeLabel($model)"/></th>
+                                                </tr>
+                                                <tr>
+                                                    <th>ROUTE</th>
+                                                    <th><input class="form-control" ng-model="model.route" uib-typeahead="route.indexNo as (route.indexNo + ' - ' + route.name) for route in model.routes|filter:{name:$viewValue}|limitTo:10" typeahead-input-formatter="ui.routeLabel($model)"/></th>
+                                                </tr>-->
+                        <tr>
+                            <th>UNLOAD POINT</th>
+                            <th><input class="form-control" ng-change="ui.changeUnloadPoint()" ng-model="model.unloadpoint" uib-typeahead="point.indexNo as (point.indexNo + ' - ' + point.name) for point in model.unloadPointList|filter:{name:$viewValue}|limitTo:10" typeahead-input-formatter="ui.unloadpointLabel($model)"/></th>
+                        </tr>
+                        <tr>
+                            <th>FIREWOOD TYPE</th>
+                            <th><input class="form-control" ng-change="ui.changeFirewoodType()" ng-model="model.firewoodtype" uib-typeahead="type.indexNo as (type.indexNo + ' - ' + type.name) for type in model.firewoodTypeList|filter:{name:$viewValue}|limitTo:10" typeahead-input-formatter="ui.firewoodtypeLabel($model)"></th>
+                        </tr>
+                    </thead>
+                </table>
+                <button class="btn btn-primary btn-block" ng-click="http.search()">BRANCH WISE</button>
+                <button class="btn btn-primary btn-block" ng-click="http.searchUnloadPointwise()">UNLOAD POINT WISE</button>
+                <!--                <button class="btn btn-primary btn-block" ng-click="ui.applyFilters();">APPLY FILTERS</button>-->
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <div class="col-xs-9 background-light">
+        <div class="row">
+            <div class="placeholder col-xs-12" style="margin-top: 5px; height: 230px;" ng-hide="model.firewoodDetails.length">
+                <h1>PLEASE FILTER TO DISPLAY CHART</h1>
+            </div>
+
+            <div class="col-xs-12" style="margin-top: 5px; height: 230px;" ng-show="model.firewoodDetails.length">
+                <canvas  style="height:100%; width: 100%" id="bar" 
+                         class="chart chart-bar"
+                         chart-data="chart.data" 
+                         chart-labels="chart.labels" 
+                         chart-options="chart.options" 
+                         chart-colors="chart.colors" 
+                         chart-series="chart.series">
+                </canvas>
+            </div>
+
+            <!--end chart-->
+            <div class="col-xs-12">
+                <table class="table-rounded" ng-show="ui.theader === 'default' && model.firewoodDetails.length">
+                    <tbody>
+                        <tr>
+                            <th>#</th>
+                            <th>BRANCH</th>
+                            <th>QTY</th>
+                            <th>AMOUNT</th>
+                        </tr>
+                    </tbody>
+                </table>
+                <table class="table-rounded" ng-show="ui.theader === 'default-branch' && model.firewoodDetails.length">
+                    <tbody>
+                        <tr>
+                            <th>BRANCH</th>
+                            <th>DATE</th>
+                            <th>QTY</th>
+                            <th>AMOUNT</th>
+                        </tr>
+                    </tbody>
+                </table>
+                <table class="table-rounded" ng-show="ui.theader === 'unloadPoint' && model.firewoodDetails.length">
+                    <tbody>
+                        <tr>
+                            <!--<th>#</th>-->
+                            <th>UNLOAD POINT</th>
+                            <th>BRANCH</th>
+                            <th>TOTAL QTY</th>
+                        </tr>
+                    </tbody>
+                </table>
+                <table class="table-rounded" ng-show="ui.theader === 'unloadbranchwise' && model.firewoodDetails.length">
+                    <tbody>
+                        <tr>
+                            <!--<th>#</th>-->
+                            <th>BRANCH</th>
+                            <th>FIREWOOD TYPE</th>
+                            <th>TOTAL QTY</th>
+                        </tr>
+                    </tbody>
+                </table>
+                <table class="table-rounded" ng-show="ui.theader === 'firewoodtype' && model.firewoodDetails.length">
+                    <tbody>
+                        <tr>
+                            <!--<th>#</th>-->
+                            <th>BRANCH</th>
+                            <th>DATE</th>
+                            <th>TOTAL QTY</th>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+
+            <div class="smart-scroll-y col-xs-12" style="height: calc(100vh - 356px); margin-top: -5px;" ng-show="model.firewoodDetails.length">
+                <table class="table-hover table-rounded">
+                    <tbody>
+                        <tr ng-repeat="firewood in model.firewoodDetails">
+                            <td>{{firewood[0]}}</td>
+                            <td ng-hide="ui.theader === 'firewoodtype' || ui.theader === 'default-branch'">{{firewood[1]}}</td>
+                            <td ng-show="ui.theader === 'firewoodtype' || ui.theader === 'default-branch'">{{firewood[1] | date}}</td>
+                            <td>{{firewood[2]}}</td>
+                            <td ng-hide="ui.theader === 'unloadPoint' || ui.theader === 'unloadbranchwise' || ui.theader === 'firewoodtype'">{{firewood[3]}}</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <!-- end information-->
+            <div class="placeholder col-xs-12" style="height: calc(100vh - 325px);" ng-hide="model.firewoodDetails.length">
+                <h1>PLEASE FILTER TO DISPLAY DETAILS</h1>
+            </div>
+            <div class="col-xs-12" ng-show="model.firewoodDetails.length">
+                <table class="control-table">
+                    <col style="width: 10%"/>
+                    <col style="width: 50%"/>
+                    <tbody>
+                        <tr>
+                            <td><label class="control-label">TOTAL QTY : {{ui.totalQty}}</label></td>
+                            <td><label class="control-label" ng-hide="ui.theader === 'unloadPoint' || ui.theader === 'unloadbranchwise' || ui.theader === 'firewoodtype'">TOTAL AMOUNT : {{ui.totalAmount | number:2}}</label></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+        </div>
+    </div>
+</div>
