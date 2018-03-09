@@ -5,10 +5,13 @@
  */
 package com.sv.desktop.reports.weigh;
 
+import com.sv.desktop.reports.weigh.model.MSuplier;
+import org.springframework.data.jpa.repository.JpaRepository;
+
 /**
  *
  * @author Nidura Prageeth
  */
-public class WeighController {
+public interface DSupplierRepository extends JpaRepository<MSuplier, Integer>{
     
 }

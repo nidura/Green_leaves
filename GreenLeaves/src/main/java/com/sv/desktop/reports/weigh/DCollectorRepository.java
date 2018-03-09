@@ -5,10 +5,13 @@
  */
 package com.sv.desktop.reports.weigh;
 
+import com.sv.desktop.reports.weigh.model.MLoginDetails;
+import org.springframework.data.jpa.repository.JpaRepository;
+
 /**
  *
  * @author Nidura Prageeth
  */
-public class WeighService {
+public interface DCollectorRepository extends JpaRepository<MLoginDetails, Integer>{
     
 }

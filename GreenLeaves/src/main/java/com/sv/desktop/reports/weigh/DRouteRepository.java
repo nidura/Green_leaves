@@ -5,10 +5,13 @@
  */
 package com.sv.desktop.reports.weigh;
 
+import com.sv.desktop.reports.weigh.model.MRoute;
+import org.springframework.data.jpa.repository.JpaRepository;
+
 /**
  *
  * @author Nidura Prageeth
  */
-public interface WeighRepository {
+public interface DRouteRepository extends JpaRepository<MRoute, Integer>{
     
 }

@@ -1,8 +1,8 @@
 <div class="index-content-header">
-    
+
 </div>
 <div class="index-content-body">
-    <div class="col-xs-4 background-dark border-right" style="height: calc(100vh - 51px); display: flex; flex-flow: column;">
+    <div class="col-xs-3 background-dark border-right" style="height: calc(100vh - 51px); display: flex; flex-flow: column;">
         <div class="row">
 
             <div class="col-xs-12">
@@ -21,134 +21,134 @@
                         </tr>
                         <tr>
                             <th>BRANCH</th>
-                            <th><input class="form-control" ng-model="model.route" uib-typeahead="route.indexNo as (route.indexNo + ' - ' + route.name) for route in model.routes|filter:{name:$viewValue}|limitTo:10" typeahead-input-formatter="ui.routeLabel($model)"/></th>
-                        </tr>
-                        <tr>
-                            <th>SUPPLIER</th>
-                            <th><input class="form-control" ng-model="model.route" uib-typeahead="route.indexNo as (route.indexNo + ' - ' + route.name) for route in model.routes|filter:{name:$viewValue}|limitTo:10" typeahead-input-formatter="ui.routeLabel($model)"/></th>
+                            <th><input class="form-control" ng-model="model.branch" uib-typeahead="branch.indexNo as (branch.indexNo + ' - ' + branch.name) for branch in model.branchList|filter:{name:$viewValue}|limitTo:10" typeahead-on-select="ui.onSelectBranch($item, $model, $label)" typeahead-input-formatter="ui.branchLabel($model)"/></th>
                         </tr>
                         <tr>
                             <th>ROUTE</th>
-                            <th><input class="form-control" ng-model="model.route" uib-typeahead="route.indexNo as (route.indexNo + ' - ' + route.name) for route in model.routes|filter:{name:$viewValue}|limitTo:10" typeahead-input-formatter="ui.routeLabel($model)"/></th>
+                            <th><input class="form-control" ng-change="ui.changeRoute()" ng-model="model.route" uib-typeahead="route.indexNo as (route.indexNo + ' - ' + route.rname) for route in model.routeList|filter:{rname:$viewValue}|limitTo:10" typeahead-input-formatter="ui.routeLabel($model)"/></th>
                         </tr>
+                        <tr>
+                            <th>COLLECTOR</th>
+                            <th><input class="form-control" ng-change="ui.changeCollector()" ng-model="model.collector" uib-typeahead="collecter.indexNo as (collecter.indexNo + ' - ' + collecter.name) for collecter in model.collectorList|filter:{name:$viewValue}|limitTo:10" typeahead-input-formatter="ui.collectorLabel($model)"/></th>
+                        </tr>
+                        <tr>
+                            <th>SUPPLIER</th>
+                            <th><input class="form-control" ng-change="ui.changeSupplier()" ng-model="model.supplier" uib-typeahead="supplier.indexNo as (supplier.indexNo + ' - ' + supplier.supname) for supplier in model.supplierList|filter:{supname:$viewValue}|limitTo:10" typeahead-input-formatter="ui.supplierLabel($model)"/></th>
+                        </tr>
+
+
                     </thead>
                 </table>
-                <button class="pull-right">SEARCH</button>
-<!--                <button class="btn btn-primary btn-block" ng-click="ui.applyFilters();">APPLY FILTERS</button>-->
+                <button class="btn btn-primary btn-block" ng-click="ui.searchByBranchWise()" >SEARCH</button>
 
             </div>
-           
+
         </div>
 
     </div>
 
-    <div class="col-xs-8 background-light">
+    <div class="col-xs-9 background-light">
         <div class="row">
             <!--chart-->
-            <div class="placeholder col-xs-12" style="margin-top: 5px; height: 200px;">
+            <div class="placeholder col-xs-12" style="margin-top: 5px; height: 200px;" ng-hide="model.weighDetailsList.length">
                 <h1>PLEASE FILTER TO DISPLAY CHART</h1>
             </div>
 
-<!--            
-            <div class="col-xs-12" style="margin-top: 5px; height: 200px;">
-                <canvas 
-                    id="line" 
-                    class="chart chart-line" 
-                    chart-dataset-override="datasetOverride" 
-                    chart-data="chart.data" 
-                    chart-labels="chart.labels" 
-                    chart-colors="chart.colors" 
-                    chart-series="chart.series" 
-                    chart-options="chart.options"
-                    style="height: 100%;">
+            <div class="col-xs-11" style="margin-top: 5px; height: 230px;" ng-show="model.weighDetailsList.length && ui.chartmode === 'bar'">
+                <canvas  style="height:100%; width: 100%" id="bar" 
+                         class="chart chart-bar"
+                         chart-data="chart.data" 
+                         chart-labels="chart.labels" 
+                         chart-options="chart.options" 
+                         chart-colors="chart.colors" 
+                         chart-series="chart.series">
                 </canvas>
-            </div>-->
+            </div>
+            <div class="col-xs-11" style="margin-top: 5px; height: 230px;" ng-show="model.weighDetailsList.length && ui.chartmode === 'line'">
+                <canvas  style="height:100%; width: 100%" id="line" 
+                         class="chart chart-line"
+                         chart-data="chart.data" 
+                         chart-labels="chart.labels" 
+                         chart-options="chart.options" 
+                         chart-colors="chart.colors" 
+                         chart-series="chart.series">
+                </canvas>
+            </div>
+            <div class="col-xs-11" style="margin-top: 5px; height: 230px;" ng-show="model.weighDetailsList.length && ui.chartmode === 'pie'">
+                <canvas  style="height:100%; width: 100%" id="pie" 
+                         class="chart chart-pie"
+                         chart-data="chart.data" 
+                         chart-labels="chart.labels" 
+                         chart-options="chart.options" 
+                         chart-colors="chart.colors" 
+                         chart-series="chart.series">
+                </canvas>
+            </div>
+            <div class="col-xs-1" ng-show="model.weighDetailsList.length" style="margin-top: 10px;">
+                <button style="width: 67px" class="btn btn-xs btn-success pull-right" ng-click="ui.selectLineChart()">Line Chart</button>
+                <button style="width: 67px;margin-top: 8px" class="btn btn-xs btn-warning pull-right" ng-click="ui.selectPieChart()">Pie Chart</button>
+                <button style="width: 67px;margin-top: 8px" class="btn btn-xs btn-primary pull-right" ng-click="ui.selectBarChart()">Bar Chart</button>
+            </div>
 
             <!--end chart-->
-            <div class="col-xs-12">
-                <table>
-                    <col style="width: 20%"/>
-                    <col style="width: 20%"/>
-                    <col style="width: 20%"/>
-                    <col style="width: 20%"/>
-                    <col style="width: 20%"/>
+            <div class="col-xs-12" ng-show="model.weighDetailsList.length">
+                <table class="table-rounded">
+                    <col style="width: 25%"/>
+                    <col style="width: 25%"/>
+                    <col style="width: 25%"/>
+                    <col style="width: 25%"/>
 
                     <tbody>
                         <tr>
-                            <th>BRANCH</th>
-                            <th>ROUTE</th>
-                            <th>SUPPLIER</th>
-                            <th>TOTAL QTY</th>
-                            <th>DATE</th>
+                            <th ng-show="ui.mode=== 'branchwise'">BRANCH</th>
+                            <th ng-show="ui.mode=== 'datewise'">DATE</th>
+                            <th ng-show="ui.mode=== 'routewise'">ROUTE</th>
+                            <!--<th>ROUTE</th>-->
+                            <th>GROSS QTY</th>
+                            <th>DEDUCTION</th>
+                            <th>NET QTY</th>
                         </tr>
                     </tbody>
                 </table>
             </div>
 
 
-            <div class="smart-scroll-y col-xs-12" style="height: calc(100vh - 300px); margin-top: -5px;" ng-show="model.data.receiveDetails.length">
-                <table class="table-hover">
-                    <col style="width: 28%"/>
-                    <col style="width: 24%"/>
-                    <col style="width: 24%"/>
-                    <col style="width: 24%"/>
+            <div class="smart-scroll-y col-xs-12" style="height: calc(100vh - 354px); margin-top: -5px;" ng-show="model.weighDetailsList.length">
+                <table class="table-hover table-rounded">
+                    <col style="width: 25%"/>
+                    <col style="width: 25%"/>
+                    <col style="width: 25%"/>
+                    <col style="width: 25%"/>
 
                     <tbody>
-                        <tr style="line-height: 24px;" ng-repeat="receiveDetail in model.data.receiveDetails|filter:{routeIndexNo:model.route}:true" ng-click="ui.selectReceiveDetail(receiveDetail.routeIndexNo)" ng-class="receiveDetail.routeIndexNo===model.selectedReceiveDetail?'selected':''">
-                            <td>
-                                <span class="label label-primary">{{receiveDetail.routeIndexNo}}</span>
-                                {{receiveDetail.routeName}}
-                            </td>
-                            <!--factory-->
-                            <td>
-                                <div class="col-xs-4">
-                                    <span class="label label-default label-full-width">N</span>
-                                </div>
-                                <div class="col-xs-8 text-right">
-                                    {{receiveDetail.factoryNormal|number:2}}
-                                </div>
-                                <div class="col-xs-4">
-                                    <span class="label label-success label-full-width">S</span>
-                                </div>
-                                <div class="col-xs-8 text-right">
-                                    {{receiveDetail.factorySuper|number:2}}
-                                </div>
-                            </td>
-                            <!--collection-->
-                            <td>
-                                <div class="col-xs-4">
-                                    <span class="label label-default label-full-width">N</span>
-                                </div>
-                                <div class="col-xs-8 text-right">
-                                    {{receiveDetail.collectionNormal|number:2}}
-                                </div>
-                                <div class="col-xs-4">
-                                    <span class="label label-success label-full-width">S</span>
-                                </div>
-                                <div class="col-xs-8 text-right">
-                                    {{receiveDetail.collectionSuper|number:2}}
-                                </div>
-                            </td>
-                            <!--diff-->
-                            <td>
-                                <div class="col-xs-4">
-                                    <span class="label label-default label-full-width">N</span>
-                                </div>
-                                <div class="col-xs-8 text-right" ng-class="(receiveDetail.factoryNormal - receiveDetail.collectionNormal)>=0?'text-success':'text-danger'">
-                                    {{(receiveDetail.factoryNormal - receiveDetail.collectionNormal)|number:2}}
-                                </div>
-                                <div class="col-xs-4">
-                                    <span class="label label-success label-full-width">S</span>
-                                </div>
-                                <div class="col-xs-8 text-right" ng-class="(receiveDetail.factorySuper - receiveDetail.collectionSuper)>=0?'text-success':'text-danger'">
-                                    {{(receiveDetail.factorySuper - receiveDetail.collectionSuper)|number:2}}
-                                </div>
-                            </td>
+                        <tr ng-repeat="weigh in model.weighDetailsList">
+                            <td ng-hide="ui.mode=== 'datewise'">{{weigh[0]}}</td>
+                            <td ng-show="ui.mode=== 'datewise'">{{weigh[0] | date}}</td>
+                            <td>{{weigh[1]}}</td>
+                            <td>{{weigh[2]}}</td>
+                            <td>{{weigh[3]}}</td>
                         </tr>
                     </tbody>
                 </table>
             </div>
             <!-- end information-->
+            <div class="placeholder col-xs-12" style="height: calc(100vh - 320px);" ng-hide="model.weighDetailsList.length">
+                <h1>PLEASE FILTER TO DISPLAY DETAILS</h1>
+            </div>
+            <div class="col-xs-12" ng-show="model.weighDetailsList.length">
+                <table class="control-table">
+                    <col style="width: 15%"/>
+                    <col style="width: 15%"/>
+                    <col style="width: 15%"/>
+                    <tbody>
+                        <tr>
+                            <td><label class="control-label">TOTAL GROSS : {{ui.totalGross}}</label></td>
+                            <td><label class="control-label">TOTAL DEDUCTION : {{ui.totalDeduction}}</label></td>
+                            <td><label class="control-label">TOTAL NET : {{ui.totalNet}}</label></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
 
 
         </div>

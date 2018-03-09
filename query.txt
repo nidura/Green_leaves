@@ -1,3 +1,5 @@
+----------------fire wooods-------------------
+
 ////with all supplier///////////////
 
 select  
@@ -143,8 +145,131 @@ where m_branch.index_no = 1
 group by f.index_no
 
 
+----------------------- green leaves weigh --------------------------
+
+//////////// from date and to date - branch wise //////////////////
+select 
+m.name as branch,
+(select ifnull(sum(t_green_leaves_weigh.total_weight),0.00) from t_green_leaves_weigh
+left join m_branch on m_branch.index_no=t_green_leaves_weigh.branch 
+where
+t_green_leaves_weigh.date between '2018-01-05' and '2018-03-06' 
+and m_branch.index_no=m.index_no) as gross_qty,
+(select ifnull(sum(t_green_leaves_weigh.general_deduction +t_green_leaves_weigh.tare_deduction
++t_green_leaves_weigh.water_deduction+ t_green_leaves_weigh.boiled_leaves + t_green_leaves_weigh.coarse_leaves),0.00) from t_green_leaves_weigh
+left join m_branch on m_branch.index_no=t_green_leaves_weigh.branch 
+where
+t_green_leaves_weigh.date between '2018-01-05' and '2018-03-06' 
+and m_branch.index_no=m.index_no) as deduction,
+(select ifnull(sum(t_green_leaves_weigh.net_weight),0.00) from t_green_leaves_weigh
+left join m_branch on m_branch.index_no=t_green_leaves_weigh.branch 
+where
+t_green_leaves_weigh.date between '2018-01-05' and '2018-03-06' 
+and m_branch.index_no=m.index_no)as net_qty
+from 
+m_branch m
+left join
+t_green_leaves_weigh on t_green_leaves_weigh.branch = m.index_no
+group by m.index_no
+order by m.index_no
+         
+/////////////// from date and to Date and branch   -- Route wise////////////////
+select 
+m.rname as route,
+(select ifnull(sum(t_green_leaves_weigh.total_weight),0.00) from t_green_leaves_weigh
+left join m_route on m_route.index_no=t_green_leaves_weigh.route
+where
+t_green_leaves_weigh.date between '2018-01-05' and '2018-03-06' 
+and m_route.index_no=m.index_no) as gross_qty,
+(select ifnull(sum(t_green_leaves_weigh.general_deduction +t_green_leaves_weigh.tare_deduction
++t_green_leaves_weigh.water_deduction+ t_green_leaves_weigh.boiled_leaves + t_green_leaves_weigh.coarse_leaves),0.00) from t_green_leaves_weigh
+left join m_route on m_route.index_no=t_green_leaves_weigh.route
+where
+t_green_leaves_weigh.date between '2018-01-05' and '2018-03-06' 
+and m_route.index_no=m.index_no)  as deduction,
+(select ifnull(sum(t_green_leaves_weigh.net_weight),0.00) from t_green_leaves_weigh
+left join m_route on m_route.index_no=t_green_leaves_weigh.route
+where
+t_green_leaves_weigh.date between '2018-01-05' and '2018-03-06' 
+and m_route.index_no=m.index_no) as net_qty
+from 
+m_route m
+left join
+m_branch on m_branch.index_no = m.branch
+left join
+t_green_leaves_weigh on t_green_leaves_weigh.route = m.index_no
+where
+m_branch.index_no = 5
+group by m.index_no
+order by m.index_no
 
 
+//////////////// fromDate and ToDate and branch and supplier - date wise /////////////////////////
+select 
+m.Date as date,
+sum(m.total_weight) as gross_qty,
+sum(m.general_deduction +m.tare_deduction
++m.water_deduction+ m.boiled_leaves + m.coarse_leaves) as dedcution,
+sum(m.net_weight) as net_qty
+from 
+t_green_leaves_weigh m
+left join
+m_branch on m_branch.index_no = m.branch
+left join
+m_suplier on m_suplier.index_no = m.supplier
+where
+m_branch.index_no = 2
+and 
+m_suplier.index_no = 1
+and
+m.date between '2018-01-05' and '2018-03-06' 
+group by date(m.date)
+order by m.date
+
+
+///////////// fromDate and ToDate and brnch and route - date wise //////////////////////////
+select 
+m.Date as date,
+sum(m.total_weight) as gross_qty,
+sum(m.general_deduction +m.tare_deduction
++m.water_deduction+ m.boiled_leaves + m.coarse_leaves) as dedcution,
+sum(m.net_weight) as net_qty
+from 
+t_green_leaves_weigh m
+left join
+m_branch on m_branch.index_no = m.branch
+left join
+m_route on m_route.index_no = m.route
+where
+m_branch.index_no = 2
+and 
+m_route.index_no = 1
+and
+m.date between '2018-01-05' and '2018-03-06' 
+group by date(m.date)
+order by m.date
+
+//////////// from todate and branch and collector - date wise//////////////////////
+select 
+m.Date as date,
+sum(m.total_weight) as gross_qty,
+sum(m.general_deduction +m.tare_deduction
++m.water_deduction+ m.boiled_leaves + m.coarse_leaves) as dedcution,
+sum(m.net_weight) as net_qty
+from 
+t_green_leaves_weigh m
+left join
+m_branch on m_branch.index_no = m.branch
+left join
+m_login_details on m_login_details.index_no = m.login_user
+where
+m_branch.index_no = 2
+and 
+m_login_details.index_no = 2
+and
+m.date between '2018-01-05' and '2018-03-06' 
+group by date(m.date)
+order by m.date 
 
 
 
